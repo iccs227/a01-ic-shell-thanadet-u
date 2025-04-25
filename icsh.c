@@ -5,6 +5,7 @@
 
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 
 #define MAX_CMD_BUFFER 255
 
@@ -96,5 +97,27 @@ int execute_command(char* buffer, char* last_command) {
     return 0;
   }
 
+  if (strcmp(command, "exit") == 0) {
+    int exit_value = 0;
+    char* arg = strtok(NULL, " ");
+
+    // if no exit value inputted then it doesnt exit
+    if (arg != NULL ){
+      // mask with 11111111b
+      exit_value = atoi(arg) & 0xFF;
+      printf("adios\n");
+      printf("exit code: %d\n", exit_value);
+
+      exit(exit_value);
+    } else {
+      printf("bad command\n");
+    }
+
+    // printf("%d\n", exit_value);
+    return 0;
+
+  }
+
+  printf("bad command\n");
   return 0;
 }
