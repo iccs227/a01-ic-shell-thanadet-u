@@ -8,10 +8,12 @@
 #define MAX_CMD_BUFFER 255
 
 int main() {
-    char buffer[MAX_CMD_BUFFER];
-    while (1) {
-        printf("icsh $ ");
-        fgets(buffer, 255, stdin);
-        printf("you said: %s\n", buffer);
-    }
+
+  char buffer[MAX_CMD_BUFFER];
+  while (1) {
+      printf("icsh $ ");
+      fgets(buffer, 255, stdin);
+      printf("you said: %s\n", buffer);
+  }
+  
 }
