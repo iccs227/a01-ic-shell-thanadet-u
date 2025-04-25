@@ -8,11 +8,12 @@
 
 #define MAX_CMD_BUFFER 255
 
-int execute_command(char* buffer);
+int execute_command(char* buffer, char* last_command);
 
 int main() {
 
   char buffer[MAX_CMD_BUFFER];
+  char last_command[MAX_CMD_BUFFER];
   int run = 1;
   int exit_code = 0;
 
@@ -41,7 +42,7 @@ int main() {
         continue;
       }
 
-    exit_code = execute_command(buffer);
+    exit_code = execute_command(buffer, last_command);
 
     if (exit_code != 0) {
       run = 0;
@@ -49,12 +50,15 @@ int main() {
       printf("exit code: %d\n", exit_code);
       printf("---------\n");
     }
+    else {
+      strcpy(last_command, buffer);
+    }
   }
 
   return 0;
 }
 
-int execute_command(char* buffer) {
+int execute_command(char* buffer, char* last_command) {
 
   // Make a copy because strtok modify the string
   char buffer_copy[MAX_CMD_BUFFER];
@@ -82,5 +86,15 @@ int execute_command(char* buffer) {
     return 0;
   }
 
-  return 1;
+  if (strcmp(command, "!!") == 0) {
+    if (strlen(last_command) != 0) {
+      printf("%s\n", last_command);
+    }
+
+    // printf("In !!\n");
+
+    return 0;
+  }
+
+  return 0;
 }
