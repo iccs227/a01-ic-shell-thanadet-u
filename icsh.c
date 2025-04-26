@@ -30,28 +30,32 @@ int main() {
   printf("                                       \n");
 
   while (run) {
-      printf("icsh$ ");
-      fgets(buffer, MAX_CMD_BUFFER, stdin);
+    printf("icsh$ ");
+    fgets(buffer, MAX_CMD_BUFFER, stdin);
 
-    // remove the \n otherwise it will be passed into the execute_command and wont be read properly
-    // ie when we input "echo" it will read as "echo\n" and so the text_after_command wont be null or 
-    // when we don't input any command it will actually input "\n"
-    // so then the execute_command will  return 1 and ggs stop running (should return 0)
+    /*
+     remove the \n otherwise it will be passed into the execute_command and wont be read properly
+     ie when we input "echo" it will read as "echo\n" and so the text_after_command wont be null or 
+     when we don't input any command it will actually input "\n"
+    */
+    buffer[strcspn(buffer, "\n")] = 0;
+    // if (strlen(buffer) == 0) {
+    // //i forgot what i was going to do here
+    //   continue;
+    // }
 
-      buffer[strcspn(buffer, "\n")] = 0;
-      if (strlen(buffer) == 0) {
+    if (strcmp(buffer, "!!") == 0) {
+      if (strlen(last_command) != 0) {
+        printf("%s\n", last_command);
+        strcpy(buffer, last_command);
+      }
+      else {
         continue;
       }
-
+    }
     exit_code = execute_command(buffer, last_command);
 
-    if (exit_code != 0) {
-      run = 0;
-      printf("\n---------\n");
-      printf("exit code: %d\n", exit_code);
-      printf("---------\n");
-    }
-    else {
+    if (exit_code == 0) {
       strcpy(last_command, buffer);
     }
   }
@@ -87,16 +91,6 @@ int execute_command(char* buffer, char* last_command) {
     return 0;
   }
 
-  if (strcmp(command, "!!") == 0) {
-    if (strlen(last_command) != 0) {
-      printf("%s\n", last_command);
-    }
-
-    // printf("In !!\n");
-
-    return 0;
-  }
-
   if (strcmp(command, "exit") == 0) {
     int exit_value = 0;
     char* arg = strtok(NULL, " ");
@@ -111,13 +105,17 @@ int execute_command(char* buffer, char* last_command) {
       exit(exit_value);
     } else {
       printf("bad command\n");
+      return -1;
     }
 
     // printf("%d\n", exit_value);
     return 0;
 
   }
+  else {
+    printf("bad command\n");
+    return -1;     //return -1 for bad command
+  }
 
-  printf("bad command\n");
-  return 0;
+  return 1;
 }
