@@ -15,7 +15,7 @@ int builtin(vector<string> args) {
 	// TODO: get exit code then exit
 	if (command == "exit") {
 		if (argc == 2) {
-			int exit_value = stoi(args[1]) & 0xFF;
+			const int exit_value = stol(args[1]) & 0xFF;
 			cout << "adios" << endl;
 			exit(exit_value);
 		}
