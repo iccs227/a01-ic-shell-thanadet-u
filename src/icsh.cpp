@@ -7,6 +7,7 @@
 #include <fstream>
 #include "header/parser.h"
 #include "header/builtins.h"
+#include "header/cmd_exec.h"
 using namespace std;
 
 void runner(string& input, string& last_command);
@@ -24,7 +25,7 @@ NOTE: should !! return print out the last command and run it? (as according to m
 		cerr << "ERROR: Too many arguments" << endl;
 		exit(1);
 	}
-	if (argc == 1) {
+	if (argc == 2) {
 		ifstream file(argv[1]);
 		if (!file.is_open()) {
 			cerr << "ERROR: Could not open file " << argv[1] << endl;
@@ -69,6 +70,8 @@ void runner(string& input, string& last_command) {
 		last_command = input;
 	}
 	auto tokens = input_parser(input);
-	builtin(tokens);
+	if (builtin(tokens) == -1) {
+		exec_command(tokens);
+	}
 
 }

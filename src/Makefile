@@ -8,13 +8,13 @@ CXXFLAGS = -Wall -Wextra -std=c++17
 TARGET = icsh
 
 # Source files
-SRCS = icsh.cpp parser.cpp builtins.cpp
+SRCS = icsh.cpp parser.cpp builtins.cpp cmd_exec.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
 
 # Header files
-DEPS = parser.h builtins.h
+DEPS = parser.h builtins.h cmd_exec.h
 
 # Default target
 all: $(TARGET)

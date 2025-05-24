@@ -1,4 +1,3 @@
-#include <cstring>
 #include <iostream>
 #include <string>
 using namespace std;
@@ -37,7 +36,7 @@ int builtin(vector<string> args) {
 		return 0;
 	}
 
-	cout << "bad command" << endl;
+	// cout << "bad command" << endl;	//
 	// Not a built-in command return -1
 	return -1;
 
