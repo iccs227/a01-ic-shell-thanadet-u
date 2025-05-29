@@ -6,17 +6,28 @@
 #include <sys/wait.h>
 #include <vector>
 #include "header/cmd_exec.h"
+#include "header/builtins.h"
 #include "header/icsh.h"
 #include "header/signal_handler.h"
+#include "header/io_redirect.h"
 
 using namespace std;
 
 int exec_command(vector<string> args) {
+	vector<string> new_args;
+	string input_file, output_file;
 
 	if (args.empty()) {
 		cerr << "ERROR: No command provided" << endl;
 		return -1; // Return -1 for error
 	}
+
+	if (args[0] == "exit") {
+		return builtin(args);
+	}
+
+	check_redirect(args, new_args, input_file, output_file);
+
 
 	pid_t pid = fork();
 	if (pid < 0) {
@@ -27,9 +38,16 @@ int exec_command(vector<string> args) {
 	if (pid == 0) {
 		// Child process
 		setpgid(0, 0);
+
+		setup_redirect(input_file, output_file);
+
+		if (builtin(new_args) != -1) {
+			exit(0);
+		}
+
 		vector<char*> prog_argv;
-		for (size_t i = 0; i < args.size(); ++i) {
-			prog_argv.push_back(const_cast<char *>(args[i].data()));
+		for (size_t i = 0; i < new_args.size(); ++i) {
+			prog_argv.push_back(const_cast<char *>(new_args[i].data()));
 		}
 
 		prog_argv.push_back(nullptr);

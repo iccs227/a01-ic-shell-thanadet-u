@@ -83,10 +83,11 @@ void runner(string& input, string& last_command) {
 		last_command = input;
 	}
 	auto tokens = input_parser(input);
-	exit_status_code = builtin(tokens);
-	if (exit_status_code == -1) {
-		exit_status_code = exec_command(tokens);
-	}
+	// exit_status_code = builtin(tokens);
+	// if (exit_status_code == -1) {
+	// 	exit_status_code = exec_command(tokens);
+	// }
+	exit_status_code = exec_command(tokens);
 
 }
 
