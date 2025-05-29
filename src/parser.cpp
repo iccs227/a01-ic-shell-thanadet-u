@@ -1,5 +1,7 @@
 #include <vector>
 #include <sstream>
+#include <string>
+#include "header/parser.h"
 
 std::vector<std::string> input_parser(const std::string& input) {
 	std::vector<std::string> tokens;

@@ -5,22 +5,30 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 #include "header/parser.h"
 #include "header/builtins.h"
 #include "header/cmd_exec.h"
+#include "header/icsh.h"
+#include "header/signal_handler.h"
 using namespace std;
 
 void runner(string& input, string& last_command);
+void set_exit_status(int status);
+
+pid_t foreground_process = -1; // Initialize foreground_process to -1
+int exit_status_code = -1;
 
 int main(int argc, char* argv[]){
     string input;
 	string last_command;
 
-	// script mode
 /*
 NOTE: should !! return print out the last command and run it? (as according to milestone 1)
 	but in milestone 2 the example doesnt print out the last command, it just runs it.
 */
+	// script mode
 	if (argc > 2) {
 		cerr << "ERROR: Too many arguments" << endl;
 		exit(1);
@@ -59,6 +67,11 @@ NOTE: should !! return print out the last command and run it? (as according to m
 }
 
 void runner(string& input, string& last_command) {
+
+	// Prevent ^C and ^Z from terminating the shell
+	signal(SIGINT, sigint_handler);
+	signal(SIGTSTP, sigtstp_handler);
+
 	if (input == "!!") {
 		if (last_command.empty()) {
 			return;
@@ -70,8 +83,13 @@ void runner(string& input, string& last_command) {
 		last_command = input;
 	}
 	auto tokens = input_parser(input);
-	if (builtin(tokens) == -1) {
-		exec_command(tokens);
+	exit_status_code = builtin(tokens);
+	if (exit_status_code == -1) {
+		exit_status_code = exec_command(tokens);
 	}
 
+}
+
+void set_exit_status(int status) {
+	exit_status_code = status;
 }
