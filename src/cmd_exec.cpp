@@ -10,20 +10,30 @@
 #include "header/icsh.h"
 #include "header/signal_handler.h"
 #include "header/io_redirect.h"
+#include "header/jobs.h"
 
 using namespace std;
 
 int exec_command(vector<string> args) {
 	vector<string> new_args;
 	string input_file, output_file;
+	bool background = false;
 
 	if (args.empty()) {
-		cerr << "ERROR: No command provided" << endl;
 		return -1; // Return -1 for error
 	}
 
 	if (args[0] == "exit") {
 		return builtin(args);
+	}
+
+	if (args[0] == "jobs" || args[0] == "fg" || args[0] == "bg") {
+		return builtin(args);
+	}
+
+	if (args.back() == "&") {
+		background = true;
+		args.pop_back();
 	}
 
 	check_redirect(args, new_args, input_file, output_file);
@@ -60,6 +70,11 @@ int exec_command(vector<string> args) {
 	else {
 		// Parent process
 		setpgid(pid, pid); // Ensures child is in its own group
+
+		if (background) {
+			add_job(pid, new_args, true); // Add job to background
+			return 0; // Go back to shell without waiting
+		}
 		foreground_process = pid;
 
 		setup_signal_handler(pid); // Sets terminal control to child
@@ -70,6 +85,11 @@ int exec_command(vector<string> args) {
 		reset_signal_handler(getpid()); // Return terminal control to shell
 		foreground_process = -1;
 
+		if (WIFSTOPPED(status)) {
+			// If the child process is stopped, update job status
+			add_job(pid, new_args, false);
+			update_job_status(pid, status);
+		}
 		if (WIFEXITED(status)) {
 			return WEXITSTATUS(status); // Return exit status of child
 		}
@@ -77,6 +97,7 @@ int exec_command(vector<string> args) {
 			return 128 + WTERMSIG(status); // Standard shell signal exit code
 		}
 	}
+
 
 	return 0; // Return 0 for success
 }

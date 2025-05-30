@@ -4,6 +4,7 @@
 #include <vector>
 #include "header/builtins.h"
 #include "header/icsh.h"
+#include "header/jobs.h"
 using namespace std;
 
 int builtin(vector<string> args) {
@@ -45,7 +46,39 @@ int builtin(vector<string> args) {
     return 0;
   }
 
-  // cout << "bad command" << endl;	//
+  if (command == "jobs") {
+    list_jobs();
+    return 0;
+  }
+
+  if (command == "fg") {
+    if (argc == 2 && args[1][0] == '%') {
+      try {
+        int job_id = stoi(args[1].substr(1));
+        fg_command(job_id);
+        return 0;
+      } catch (...) {
+        cerr << "fg: invalid job id" << endl;
+      }
+    }
+    cerr << "Usage: fg %jobid" << endl;
+    return -1;
+  }
+
+  if (command == "bg") {
+    if (argc == 2 && args[1][0] == '%') {
+      try {
+        int job_id = stoi(args[1].substr(1));
+        bg_command(job_id);
+        return 0;
+      } catch (...) {
+        cerr << "bg: invalid job id" << endl;
+      }
+    }
+    cerr << "Usage: bg %jobid" << endl;
+    return -1;
+  }
+
   // Not a built-in command return -1
   return -1;
 }

@@ -30,4 +30,3 @@ void reset_signal_handler(pid_t pid) {
 	tcsetpgrp(STDIN_FILENO, pid);
 	signal(SIGTTOU, SIG_DFL); // Reset SIGTTOU to default behavior
 }
-

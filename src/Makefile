@@ -8,13 +8,13 @@ CXXFLAGS = -Wall -Wextra -std=c++17
 TARGET = icsh
 
 # Source files
-SRCS = icsh.cpp parser.cpp builtins.cpp cmd_exec.cpp signal_handler.cpp io_redirect.cpp
+SRCS = icsh.cpp parser.cpp builtins.cpp cmd_exec.cpp signal_handler.cpp io_redirect.cpp jobs.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
 
 # Header files
-DEPS = parser.h builtins.h cmd_exec.h icsh.h signal_handler.h io_redirect.h
+DEPS = parser.h builtins.h cmd_exec.h icsh.h signal_handler.h io_redirect.h jobs.h
 
 # Default target
 all: $(TARGET)

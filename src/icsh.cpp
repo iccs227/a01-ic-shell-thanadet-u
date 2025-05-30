@@ -8,14 +8,14 @@
 #include <string>
 #include <vector>
 #include "header/parser.h"
-#include "header/builtins.h"
 #include "header/cmd_exec.h"
 #include "header/icsh.h"
+#include "header/jobs.h"
 #include "header/signal_handler.h"
 using namespace std;
 
 void runner(string& input, string& last_command);
-void set_exit_status(int status);
+
 
 pid_t foreground_process = -1; // Initialize foreground_process to -1
 int exit_status_code = -1;
@@ -23,6 +23,10 @@ int exit_status_code = -1;
 int main(int argc, char* argv[]){
     string input;
 	string last_command;
+
+	// Prevent ^C and ^Z from terminating the shell
+	signal(SIGINT, sigint_handler);
+	signal(SIGTSTP, sigtstp_handler);
 
 /*
 NOTE: should !! return print out the last command and run it? (as according to milestone 1)
@@ -60,17 +64,18 @@ NOTE: should !! return print out the last command and run it? (as according to m
 
 	// interactive mode
     while (true) {
+    	check_background_jobs(); // Check for background jobs
     	cout << "icsh$ ";
-    	getline(cin, input);
+    	if (!getline(cin, input)) {
+    		// Handle EOF (Ctrl+D) (EXTRA FEATURE O_O?)
+    		cout << endl;
+    		exit(0);
+    	}
     	runner(input, last_command);
     }
 }
 
 void runner(string& input, string& last_command) {
-
-	// Prevent ^C and ^Z from terminating the shell
-	signal(SIGINT, sigint_handler);
-	signal(SIGTSTP, sigtstp_handler);
 
 	if (input == "!!") {
 		if (last_command.empty()) {
