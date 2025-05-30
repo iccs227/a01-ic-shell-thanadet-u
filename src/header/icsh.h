@@ -6,5 +6,6 @@
 #define ICSH_H
 extern pid_t foreground_process;
 extern int exit_status_code;
+extern std::vector<std::string> command_history;
 void set_exit_status(int status);
 #endif //ICSH_H

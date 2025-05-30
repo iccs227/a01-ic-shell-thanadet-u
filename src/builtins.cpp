@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "header/builtins.h"
+#include <unistd.h>
 #include "header/icsh.h"
 #include "header/jobs.h"
 using namespace std;
@@ -77,6 +78,40 @@ int builtin(vector<string> args) {
     }
     cerr << "Usage: bg %jobid" << endl;
     return -1;
+  }
+
+  // Extra feature: cd command
+  if (command == "cd") {
+    if (argc == 2) {
+    // Change to specified directory
+    if (chdir(args[1].c_str()) != 0) {
+      perror("cd can't change directory");
+      return 1;
+    }
+  } else {
+    cerr << "cd <path>" << endl;
+    return 1;
+  }
+    return 0;
+  }
+
+  if (command == "history") {
+    for (const auto& cmd : command_history) {
+      cout << cmd << endl;
+    }
+  }
+
+  if (command == "help") {
+    cout << "Built-in commands:\n"
+         << "  cd [dir]    - Change directory\n"
+         << "  exit [code] - Exit shell\n"
+         << "  echo [text] - Print text\n"
+         << "  jobs        - List background jobs\n"
+         << "  fg %id      - Bring job to foreground\n"
+         << "  bg %id      - Resume job in background\n"
+         << "  help        - Show this help\n"
+         << "  history     - Show command history\n";
+    return 0;
   }
 
   // Not a built-in command return -1

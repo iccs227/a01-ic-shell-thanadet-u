@@ -19,6 +19,7 @@ void runner(string& input, string& last_command);
 
 pid_t foreground_process = -1; // Initialize foreground_process to -1
 int exit_status_code = -1;
+vector<string> command_history;
 
 int main(int argc, char* argv[]){
     string input;
@@ -65,7 +66,7 @@ NOTE: should !! return print out the last command and run it? (as according to m
 	// interactive mode
     while (true) {
     	check_background_jobs(); // Check for background jobs
-    	cout << "icsh$ ";
+    	cout << "\033[1;32micsh$ \033[0;34m";
     	if (!getline(cin, input)) {
     		// Handle EOF (Ctrl+D) (EXTRA FEATURE O_O?)
     		cout << endl;
@@ -86,6 +87,10 @@ void runner(string& input, string& last_command) {
 	}
 	else {
 		last_command = input;
+		if (command_history.size() >= 5) {
+			command_history.erase(command_history.begin());
+		}
+		command_history.push_back(input);
 	}
 	auto tokens = input_parser(input);
 	// exit_status_code = builtin(tokens);

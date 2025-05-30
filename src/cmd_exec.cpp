@@ -23,11 +23,7 @@ int exec_command(vector<string> args) {
 		return -1; // Return -1 for error
 	}
 
-	if (args[0] == "exit") {
-		return builtin(args);
-	}
-
-	if (args[0] == "jobs" || args[0] == "fg" || args[0] == "bg") {
+	if (args[0] == "jobs" || args[0] == "fg" || args[0] == "bg" || args[0] == "cd" || args[0] == "exit" || args[0] == "history" || args[0] == "help") {
 		return builtin(args);
 	}
 
