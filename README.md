@@ -2,3 +2,10 @@
 # ICSH
 
 Please describe your assumptions and/or implementation here. 
+
+Extra Features:
+    - cd (change dir)
+    - history (list 5 last used commands)
+    - cool ascii art (did it before uroll)
+    - shell prompt with colors
+    - help (list useage for builtin commands)
